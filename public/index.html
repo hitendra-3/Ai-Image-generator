@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Canvas - Simple Image Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-gray-900">
+    <!-- Navigation -->
+    <nav class="glass-effect fixed top-0 w-full z-50 py-3 px-6">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                </div>
+                <span class="text-lg font-semibold gradient-text">AI Canvas</span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-400 hover:text-white transition-colors text-sm">
+                    Help
+                </button>
+                <button class="bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded text-white text-sm transition-colors">
+                    Try Free
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-6">
+        <div class="max-w-4xl mx-auto">
+            <!-- Hero Section -->
+            <div class="text-center mb-12 fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    Create Amazing Images with <span class="gradient-text">AI</span>
+                </h1>
+                <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                    Describe what you want to see, and our AI will bring your imagination to life. Simple, fast, and magical.
+                </p>
+            </div>
+
+            <!-- Generator Interface -->
+            <div class="glass-effect rounded-xl p-6 mb-8 fade-in">
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-gray-300 font-medium">Your imagination</label>
+                        <span class="text-sm text-gray-500">Be creative!</span>
+                    </div>
+                    <textarea 
+                        id="promptInput"
+                        class="w-full h-24 bg-gray-800 border border-gray-700 rounded-lg p-4 text-white placeholder-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                        placeholder="Example: A cute robot painting a sunset on Mars with watercolors..."
+                        maxlength="500"
+                    ></textarea>
+                    <div class="text-right text-sm text-gray-500 mt-1">
+                        <span id="charCount">0</span>/500 characters
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- Style Selector -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Art Style</label>
+                        <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option>Realistic</option>
+                            <option>Artistic</option>
+                            <option>Cartoon</option>
+                            <option>Anime</option>
+                            <option>Pixel Art</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Size Selector -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Image Size</label>
+                        <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option>512x512</option>
+                            <option selected>1024x1024</option>
+                            <option>2048x2048</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Quality Selector -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Quality</label>
+                        <select class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option>Fast</option>
+                            <option selected>Standard</option>
+                            <option>High Quality</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="generateBtn" class="btn-primary w-full py-3 rounded-lg text-white font-semibold flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Generate Image
+                </button>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden mt-6 text-center">
+                    <div class="loading-dots mx-auto mb-3">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Creating your image... This usually takes 15-30 seconds</p>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="glass-effect rounded-xl p-6 mb-8 fade-in">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Pro Tips for Better Results
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="flex items-start">
+                        <span class="text-purple-400 mr-2">•</span>
+                        <span class="text-gray-300">Be specific about colors, style, and mood</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-purple-400 mr-2">•</span>
+                        <span class="text-gray-300">Mention the environment and lighting</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-purple-400 mr-2">•</span>
+                        <span class="text-gray-300">Include artistic style references</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-purple-400 mr-2">•</span>
+                        <span class="text-gray-300">Describe the composition and perspective</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Image Display -->
+            <div id="resultContainer" class="hidden glass-effect rounded-xl p-6 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Your Creation</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded text-white text-sm transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download
+                        </button>
+                        <button onclick="regenerateImage()" class="bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded text-white text-sm transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Regenerate
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <img id="generatedImage" src="" alt="AI generated image" class="w-full rounded-lg card-hover" onerror="handleImageError()" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d552d9b8-4b04-47f8-929f-50da8ef05911.png">
+                    <div id="imageError" class="hidden bg-gray-800 rounded-lg p-8 text-center">
+                        <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p class="text-gray-400">Image failed to load. Please try generating again.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                    <p class="text-sm text-gray-400 mb-1">Prompt used:</p>
+                    <p id="usedPrompt" class="text-gray-300 text-sm"></p>
+                </div>
+            </div>
+
+            <!-- Quick Examples -->
+            <div class="glass-effect rounded-xl p-6 fade-in">
+                <h3 class="text-lg font-semibold mb-4">Try These Examples</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="useExample(this)" class="text-left p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors text-sm">
+                        "A peaceful forest with glowing mushrooms at night"
+                    </button>
+                    <button onclick="useExample(this)" class="text-left p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors text-sm">
+                        "Futuristic city with flying cars and neon lights"
+                    </button>
+                    <button onclick="useExample(this)" class="text-left p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors text-sm">
+                        "Cute cartoon cat wearing astronaut helmet"
+                    </button>
+                    <button onclick="useExample(this)" class="text-left p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors text-sm">
+                        "Sunset over ocean with dolphins jumping"
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="glass-effect py-4 px-6 text-center">
+        <p class="text-gray-400 text-sm">© 2024 AI Canvas. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
