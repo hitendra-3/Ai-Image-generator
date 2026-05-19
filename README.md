@@ -1,4 +1,4 @@
-# AI Canvas
+# AI Canvas - 
 
 AI Canvas is a simple yet powerful AI Image Generator that transforms text prompts into beautiful images using the Stability AI API.
 
